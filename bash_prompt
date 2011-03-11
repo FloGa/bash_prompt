@@ -1,0 +1,166 @@
+#!/bin/bash
+# now some mods by FloGa
+
+# my very own prompt
+
+# colors
+function blue ()
+{
+    echo -e "\033[0;34m$1\033[0m"
+}
+
+function brown ()
+{
+    echo -e "\033[0;33m$1\033[0m"
+}
+
+function green ()
+{
+    echo -e "\033[1;32m$1\033[0m"
+}
+
+function grey ()
+{
+    echo -e "\033[1;30m$1\033[0m"
+}
+
+function lilac ()
+{
+    echo -e "\033[1;35m$1\033[0m"
+}
+
+function red ()
+{
+    echo -e "\033[0;31m$1\033[0m"
+}
+
+function turquoise ()
+{
+    echo -e "\033[0;36m$1\033[0m"
+}
+
+# if in hg-directory, print informations about it
+
+function hg_check ()
+{
+    { [ -d ".hg" ] && echo '.'; } || { [ -d "../.hg" ] && echo '..'; } \
+        || { [ -d "../../.hg" ] && echo '../..'; } \
+        || { [ -d "../../../.hg" ] && echo '../../..'; }
+}
+
+function hg_info ()
+{
+    hg_root=$(hg_check)
+    if [ -n "$hg_root" ]; then
+        hg_root=$(realpath $hg_root)
+        prompt_dir=$HOME/.prompt$hg_root
+
+        [ ! -d $prompt_dir ] && mkdir -p $prompt_dir
+
+        date_root=$(date -r $hg_root +%s)
+        date_hg=$(date -r $hg_root/.hg +%s)
+
+        for file in branch tags patches; do
+            [ -f $prompt_dir/$file ] && \
+                [ $(date -r $prompt_dir/$file +%s) -ge $date_hg ] && \
+                . $prompt_dir/$file
+        done
+
+        for file in st; do
+            [ -f $prompt_dir/$file ] && \
+                [ $(date -r $prompt_dir/$file +%s) -ge $date_hg ] && \
+                [ $(date -r $prompt_dir/$file +%s) -ge $(date -r . +%s) ] && \
+                . $prompt_dir/$file
+        done
+
+        if [ ! -n "$prompt_st" ]; then
+            echo -n "prompt_st='" >$prompt_dir/st
+            hg_st=$(hg st | sed 's/?/\\\?/')
+            if [ -n "$hg_st" ]; then
+                if [ -n "$(echo $hg_st | grep '?')" ]; then
+                    echo -ne $(turquoise '?') >>$prompt_dir/st
+                else
+                    echo -ne $(turquoise '!') >>$prompt_dir/st
+                fi
+            else
+                echo -n 'NUL' >>$prompt_dir/st
+            fi
+            echo -n "'" >>$prompt_dir/st
+            . $prompt_dir/st
+        fi
+        [ "$prompt_st" == 'NUL' ] && unset prompt_st
+
+        if [ ! -n "$prompt_branch" ]; then
+            echo -n "prompt_branch='" >$prompt_dir/branch
+            echo -ne 'on '$(red $(hg branch)) >>$prompt_dir/branch
+            echo -n "'" >>$prompt_dir/branch
+            . $prompt_dir/branch
+        fi
+
+        if [ ! -n "$prompt_tags" ]; then
+            echo -n "prompt_tags='" >$prompt_dir/tags
+            hg_tags=$(hg id -t)
+            for i in $hg_tags; do
+                if [ -n "$tags" ]; then
+                    tags=$tags", "$(lilac $i)
+                else
+                    echo -n 'at ' >>$prompt_dir/tags
+                    tags=$(lilac $i)
+                fi
+            done
+            if [ -n "$tags" ]; then
+                echo -ne $tags >>$prompt_dir/tags
+            else
+                echo -n 'NUL' >>$prompt_dir/tags
+            fi
+            echo -n "'" >>$prompt_dir/tags
+            . $prompt_dir/tags
+        fi
+        [ "$prompt_tags" == 'NUL' ] && unset prompt_tags
+
+        if [ ! -n "$prompt_patches" ]; then
+            echo -n "prompt_patches='" >$prompt_dir/patches
+            for i in $(hg qapplied); do
+                if [ -n "$patches" ]; then
+                    patches=$patches' → '$(turquoise $i)
+                else
+                    echo -ne "patches: " >>$prompt_dir/patches
+                    patches=$(turquoise $i)
+                fi
+            done
+            for i in $(hg qunapplied); do
+                if [ -n "$patches" ]; then
+                    patches=$patches' → '$(grey $i)
+                else
+                    echo -ne "patches: " >>$prompt_dir/patches
+                    patches=$(grey $i)
+                fi
+            done
+            if [ -n "$patches" ]; then
+                echo -n $patches >>$prompt_dir/patches
+            else
+                echo -n 'NUL' >>$prompt_dir/patches
+            fi
+            echo -n "'" >>$prompt_dir/patches
+            . $prompt_dir/patches
+        fi
+        [ "$prompt_patches" == 'NUL' ] && unset prompt_patches
+
+        echo -e $prompt_st' '$prompt_branch' '$prompt_tags"\n"$prompt_patches
+    fi
+}
+
+# prompt character
+
+function prompt_char ()
+{
+    if [ -n "$(hg_check)" ]; then
+        echo -n '☿'
+    else
+        echo -n "\$"
+    fi
+}
+
+PS1='\n'"$(brown '\u')"' at '"$(green '\h')"' in '"$(blue '\w')"
+PS1=$PS1'$(hg_info)\n$(prompt_char) '
+export PS1
