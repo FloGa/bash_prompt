@@ -101,7 +101,9 @@ function hg_info ()
         file="patches"
         [ -f $prompt_dir/$file ] && \
             file_time=$(date -r $prompt_dir/$file +%s) && \
-            [ $file_time -ge $(date -r $hg_root/.hg/patches +%s) ] && \
+            { patch_time=$(date -r $hg_root/.hg/patches +%s 2>/dev/null) || \
+                patch_time=0; } && \
+            [ $file_time -ge $patch_time ] && \
             . $prompt_dir/$file
 
         if [ ! -n "$prompt_revnum" ]; then
