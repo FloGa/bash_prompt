@@ -57,6 +57,11 @@ function turquoise ()
     echo -e "\033[0;36m$1\033[0m"
 }
 
+function turquoise_u ()
+{
+    echo -e "\033[4;36m$1\033[0m"
+}
+
 # if in hg-directory, print informations about it
 
 function hg_check ()
@@ -146,13 +151,18 @@ function hg_info ()
         [ "$prompt_tags" == 'NUL' ] && unset prompt_tags
 
         if [ ! -n "$prompt_patches" ]; then
+            hg_qtop=$(hg qtop 2>/dev/null)
             echo -n "prompt_patches='" >$prompt_dir/patches
             for i in $(hg qapplied); do
                 if [ -n "$patches" ]; then
-                    patches=$patches' → '$(turquoise $i)
+                    patches=$patches' → '
                 else
                     echo -ne "patches: " >>$prompt_dir/patches
-                    patches=$(turquoise $i)
+                fi
+                if [ "$i" == "$hg_qtop" ]; then
+                    patches=$patches$(turquoise_u $i)
+                else
+                    patches=$patches$(turquoise $i)
                 fi
             done
             for i in $(hg qunapplied); do
