@@ -84,7 +84,13 @@ function hg_info ()
         date_root=$(date -r $hg_root +%s)
         date_hg=$(date -r $hg_root/.hg +%s)
 
-        for file in branch revnum tags; do
+        if [ -d $hg_root/.hg/patches ]; then
+            patch_time=$(date -r $hg_root/.hg/patches +%s)
+        else
+            patch_time=0;
+        fi
+
+        for file in branch revnum; do
             [ -f $prompt_dir/$file ] && \
                 [ $(date -r $prompt_dir/$file +%s) -ge $date_hg ] && \
                 . $prompt_dir/$file
@@ -99,13 +105,12 @@ function hg_info ()
             . $prompt_dir/$file
         # done
 
-        file="patches"
-        [ -f $prompt_dir/$file ] && \
-            file_time=$(date -r $prompt_dir/$file +%s) && \
-            { patch_time=$(date -r $hg_root/.hg/patches +%s 2>/dev/null) || \
-                patch_time=0; } && \
-            [ $file_time -ge $patch_time ] && \
-            . $prompt_dir/$file
+        for file in patches tags; do
+            [ -f $prompt_dir/$file ] && \
+                file_time=$(date -r $prompt_dir/$file +%s) && \
+                [ $file_time -ge $patch_time ] && \
+                . $prompt_dir/$file
+        done
 
         if [ ! -n "$prompt_revnum" ]; then
             echo -n "prompt_revnum='" >$prompt_dir/revnum
