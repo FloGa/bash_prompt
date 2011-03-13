@@ -73,7 +73,7 @@ function hg_info ()
         date_root=$(date -r $hg_root +%s)
         date_hg=$(date -r $hg_root/.hg +%s)
 
-        for file in branch tags patches; do
+        for file in branch patches tags; do
             [ -f $prompt_dir/$file ] && \
                 [ $(date -r $prompt_dir/$file +%s) -ge $date_hg ] && \
                 . $prompt_dir/$file
