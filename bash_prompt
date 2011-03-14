@@ -115,14 +115,15 @@ function hg_info ()
 
         if [ ! -n "$prompt_revnum" ]; then
             echo -n "prompt_revnum='" >$prompt_dir/revnum
-            echo -ne $(lightblue ':'$(hg id -n | sed 's/+//')) >>$prompt_dir/revnum
+            echo -ne $(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+//')) \
+                >>$prompt_dir/revnum
             echo -n "'" >>$prompt_dir/revnum
             . $prompt_dir/revnum
         fi
 
         if [ ! -n "$prompt_st" ]; then
             echo -n "prompt_st='" >$prompt_dir/st
-            hg_st=$(hg st | sed 's/?/\\\?/')
+            hg_st=$(hg st 2>/dev/null | sed 's/?/\\\?/')
             if [ -n "$hg_st" ]; then
                 if [ -n "$(echo $hg_st | grep '?')" ]; then
                     echo -ne $(turquoise '?') >>$prompt_dir/st
@@ -139,14 +140,14 @@ function hg_info ()
 
         if [ ! -n "$prompt_branch" ]; then
             echo -n "prompt_branch='" >$prompt_dir/branch
-            echo -ne 'on '$(red $(hg branch)) >>$prompt_dir/branch
+            echo -ne 'on '$(red $(hg branch 2>/dev/null)) >>$prompt_dir/branch
             echo -n "'" >>$prompt_dir/branch
             . $prompt_dir/branch
         fi
 
         if [ ! -n "$prompt_tags" ]; then
             echo -n "prompt_tags='" >$prompt_dir/tags
-            hg_tags=$(hg id -t)
+            hg_tags=$(hg id -t 2>/dev/null)
             for i in $hg_tags; do
                 if [ -n "$tags" ]; then
                     tags=$tags", "$(lilac $i)
@@ -169,7 +170,7 @@ function hg_info ()
             hg_qtop=$(hg qtop 2>/dev/null)
             echo -n "prompt_patches='" >$prompt_dir/patches
             if [ -n "$hg_qtop" ]; then
-                for i in $(hg qapplied); do
+                for i in $(hg qapplied 2>/dev/null); do
                     if [ -n "$patches" ]; then
                         patches=$patches' → '
                     else
@@ -181,7 +182,7 @@ function hg_info ()
                         patches=$patches$(turquoise $i)
                     fi
                 done
-                for i in $(hg qunapplied); do
+                for i in $(hg qunapplied 2>/dev/null); do
                     if [ -n "$patches" ]; then
                         patches=$patches' → '$(grey $i)
                     else
@@ -200,7 +201,8 @@ function hg_info ()
         fi
         [ "$prompt_patches" == 'NUL' ] && unset prompt_patches
 
-        echo -e $prompt_revnum$prompt_st' '$prompt_branch' '$prompt_tags"\n"$prompt_patches
+        echo -ne $prompt_revnum$prompt_st' '$prompt_branch' '$prompt_tags"\n"
+        echo -ne $prompt_patches
     fi
 }
 
