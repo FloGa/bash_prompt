@@ -4,7 +4,8 @@
 # show extended information about an existing mercurial repository in the
 # current directory if there is one.
 #
-# I got this from http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
+# I got this idea from
+# http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/
 #
 # Additionally I modified Steve's idea that had a great disadvantage: Everytime
 # the prompt refreshes it had to run serveral hg-commandos to display the
