@@ -86,9 +86,9 @@ function hg_info ()
         date_hg=$(date -r $hg_root/.hg +%s)
 
         if [ -d $hg_root/.hg/patches ]; then
-            patch_time=$(date -r $hg_root/.hg/patches +%s)
+            date_patch=$(date -r $hg_root/.hg/patches +%s)
         else
-            patch_time=0;
+            date_patch=0;
         fi
 
         for file in branch revnum; do
@@ -100,26 +100,26 @@ function hg_info ()
         # for file in patches; do
         file="patches"
             [ -f $prompt_dir/$file ] && \
-                file_time=$(date -r $prompt_dir/$file +%s) && \
-                [ $file_time -ge $patch_time ] && \
+                date_file=$(date -r $prompt_dir/$file +%s) && \
+                [ $date_file -ge $date_patch ] && \
                 . $prompt_dir/$file
         # done
         
         # for file in st; do
         file="st"
         [ -f $prompt_dir/$file ] && \
-            file_time=$(date -r $prompt_dir/$file +%s) && \
-            [ $file_time -ge $date_hg ] && \
-            [ $file_time -ge $(date -r . +%s) ] && \
+            date_file=$(date -r $prompt_dir/$file +%s) && \
+            [ $date_file -ge $date_hg ] && \
+            [ $date_file -ge $(date -r . +%s) ] && \
             . $prompt_dir/$file
         # done
 
         # for file in tags; do
         file="tags"
             [ -f $prompt_dir/$file ] && \
-                file_time=$(date -r $prompt_dir/$file +%s) && \
-                [ $file_time -ge $date_hg ] && \
-                [ $file_time -ge $patch_time ] && \
+                date_file=$(date -r $prompt_dir/$file +%s) && \
+                [ $date_file -ge $date_hg ] && \
+                [ $date_file -ge $date_patch ] && \
                 . $prompt_dir/$file
         # done
 
