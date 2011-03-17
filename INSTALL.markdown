@@ -1,5 +1,3 @@
--*- markdown -*-
-
 Install the bash_prompt
 =======================
 

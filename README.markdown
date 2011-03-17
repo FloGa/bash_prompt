@@ -1,5 +1,3 @@
--*- markdown -*-
-
 bash_prompt
 ===========
 
