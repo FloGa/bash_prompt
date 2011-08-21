@@ -63,6 +63,13 @@ function hg_info ()
         hg_root=$(realpath $hg_root)
         prompt_dir=$HOME/.prompt$hg_root
 
+        # declare every single variable
+        prompt_branch=''
+        prompt_patches=''
+        prompt_revnum=''
+        prompt_st=''
+        prompt_tags=''
+
         [ ! -d $prompt_dir ] && mkdir -p $prompt_dir
 
         date_root=$(date -r $hg_root +%s)
