@@ -137,7 +137,7 @@ function hg_info ()
             printf "'" >>$prompt_dir/st
             . $prompt_dir/st
         fi
-        [ "$prompt_st" == "NUL" ] && unset prompt_st
+        [ "$prompt_st" = "NUL" ] && unset prompt_st
 
         if [ -z "$prompt_branch" ]; then
             printf "prompt_branch='" >$prompt_dir/branch
@@ -165,7 +165,7 @@ function hg_info ()
             printf "'" >>$prompt_dir/tags
             . $prompt_dir/tags
         fi
-        [ "$prompt_tags" == "NUL" ] && unset prompt_tags
+        [ "$prompt_tags" = "NUL" ] && unset prompt_tags
 
         if [ -z "$prompt_bookmark" ]; then
             hg_bookmarks=$(hg bookmarks 2>/dev/null | grep '*' | \
@@ -182,7 +182,7 @@ function hg_info ()
             printf "'" >>$prompt_dir/bookmark
             . $prompt_dir/bookmark
         fi
-        [ "$prompt_bookmark" == "NUL" ] && unset prompt_bookmark
+        [ "$prompt_bookmark" = "NUL" ] && unset prompt_bookmark
 
         if [ -z "$prompt_patches" ]; then
             hg_qtop=$(hg qtop 2>/dev/null)
@@ -194,7 +194,7 @@ function hg_info ()
                     else
                         printf "patches: " >>$prompt_dir/patches
                     fi
-                    if [ "$i" == "$hg_qtop" ]; then
+                    if [ "$i" = "$hg_qtop" ]; then
                         patches=$patches$(turquoise_u $i)
                     else
                         patches=$patches$(turquoise $i)
@@ -217,7 +217,7 @@ function hg_info ()
             printf "'" >>$prompt_dir/patches
             . $prompt_dir/patches
         fi
-        [ "$prompt_patches" == "NUL" ] && unset prompt_patches
+        [ "$prompt_patches" = "NUL" ] && unset prompt_patches
 
         printf "$prompt_revnum$prompt_st $prompt_branch $prompt_tags\n"
         [ "$prompt_bookmark" ] && printf "$prompt_bookmark\n"
