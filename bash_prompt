@@ -106,7 +106,7 @@ function hg_info ()
                 . $prompt_dir/$file
         # done
 
-        if [ ! -n "$prompt_revnum" ]; then
+        if [ -z "$prompt_revnum" ]; then
             echo -n "prompt_revnum='" >$prompt_dir/revnum
             echo -ne $(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+//')) \
                 >>$prompt_dir/revnum
@@ -114,7 +114,7 @@ function hg_info ()
             . $prompt_dir/revnum
         fi
 
-        if [ ! -n "$prompt_st" ]; then
+        if [ -z "$prompt_st" ]; then
             echo -n "prompt_st='" >$prompt_dir/st
             hg_st=$(hg st 2>/dev/null | sed 's/?/\\\?/')
             if [ -n "$hg_st" ]; then
@@ -131,14 +131,14 @@ function hg_info ()
         fi
         [ "$prompt_st" == 'NUL' ] && unset prompt_st
 
-        if [ ! -n "$prompt_branch" ]; then
+        if [ -z "$prompt_branch" ]; then
             echo -n "prompt_branch='" >$prompt_dir/branch
             echo -ne 'on '$(red $(hg branch 2>/dev/null)) >>$prompt_dir/branch
             echo -n "'" >>$prompt_dir/branch
             . $prompt_dir/branch
         fi
 
-        if [ ! -n "$prompt_tags" ]; then
+        if [ -z "$prompt_tags" ]; then
             echo -n "prompt_tags='" >$prompt_dir/tags
             hg_tags=$(hg id -t 2>/dev/null)
             for i in $hg_tags; do
@@ -159,7 +159,7 @@ function hg_info ()
         fi
         [ "$prompt_tags" == 'NUL' ] && unset prompt_tags
 
-        if [ ! -n "$prompt_patches" ]; then
+        if [ -z "$prompt_patches" ]; then
             hg_qtop=$(hg qtop 2>/dev/null)
             echo -n "prompt_patches='" >$prompt_dir/patches
             if [ -n "$hg_qtop" ]; then
