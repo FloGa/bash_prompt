@@ -64,6 +64,7 @@ function hg_info ()
         prompt_dir=$HOME/.prompt$hg_root
 
         # declare every single variable
+        prompt_bookmark=''
         prompt_branch=''
         prompt_patches=''
         prompt_revnum=''
@@ -81,7 +82,7 @@ function hg_info ()
             date_patch=0;
         fi
 
-        for file in branch revnum; do
+        for file in bookmark branch revnum; do
             [ -f $prompt_dir/$file ] && \
                 [ $(date -r $prompt_dir/$file +%s) -ge $date_hg ] && \
                 . $prompt_dir/$file
@@ -166,6 +167,23 @@ function hg_info ()
         fi
         [ "$prompt_tags" == 'NUL' ] && unset prompt_tags
 
+        if [ -z "$prompt_bookmark" ]; then
+            hg_bookmarks=$(hg bookmarks 2>/dev/null | grep '*' | \
+                sed 's/\s*\*\s*//' | sed 's/\s.*//')
+            echo -n "prompt_bookmark='" >$prompt_dir/bookmark
+            if [ -n "$hg_bookmarks" ]; then
+                bookmarks="bookmark: "$(red $hg_bookmarks)
+            fi
+            if [ -n "$bookmarks" ]; then
+                echo -ne "$bookmarks" >>$prompt_dir/bookmark
+            else
+                echo -n 'NUL' >>$prompt_dir/bookmark
+            fi
+            echo -n "'" >>$prompt_dir/bookmark
+            . $prompt_dir/bookmark
+        fi
+        [ "$prompt_bookmark" == 'NUL' ] && unset prompt_bookmark
+
         if [ -z "$prompt_patches" ]; then
             hg_qtop=$(hg qtop 2>/dev/null)
             echo -n "prompt_patches='" >$prompt_dir/patches
@@ -202,6 +220,7 @@ function hg_info ()
         [ "$prompt_patches" == 'NUL' ] && unset prompt_patches
 
         echo -ne $prompt_revnum$prompt_st' '$prompt_branch' '$prompt_tags"\n"
+        [ "$prompt_bookmark" ] && echo -ne $prompt_bookmark"\n"
         echo -ne $prompt_patches
     fi
 }
