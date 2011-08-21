@@ -4,47 +4,47 @@
 
 function blue ()
 {
-    echo -e "\033[0;34m$1\033[0m"
+    printf "\033[0;34m$1\033[0m"
 }
 
 function lightblue ()
 {
-    echo -e "\033[1;34m$1\033[0m"
+    printf "\033[1;34m$1\033[0m"
 }
 
 function brown ()
 {
-    echo -e "\033[0;33m$1\033[0m"
+    printf "\033[0;33m$1\033[0m"
 }
 
 function green ()
 {
-    echo -e "\033[1;32m$1\033[0m"
+    printf "\033[1;32m$1\033[0m"
 }
 
 function grey ()
 {
-    echo -e "\033[1;30m$1\033[0m"
+    printf "\033[1;30m$1\033[0m"
 }
 
 function lilac ()
 {
-    echo -e "\033[1;35m$1\033[0m"
+    printf "\033[1;35m$1\033[0m"
 }
 
 function red ()
 {
-    echo -e "\033[0;31m$1\033[0m"
+    printf "\033[0;31m$1\033[0m"
 }
 
 function turquoise ()
 {
-    echo -e "\033[0;36m$1\033[0m"
+    printf "\033[0;36m$1\033[0m"
 }
 
 function turquoise_u ()
 {
-    echo -e "\033[4;36m$1\033[0m"
+    printf "\033[4;36m$1\033[0m"
 }
 
 # if in hg-directory, print informations about it
@@ -115,54 +115,54 @@ function hg_info ()
         # done
 
         if [ -z "$prompt_revnum" ]; then
-            echo -n "prompt_revnum='" >$prompt_dir/revnum
-            echo -ne $(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+$//')) \
+            printf "prompt_revnum='" >$prompt_dir/revnum
+            printf "$(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+$//'))" \
                 >>$prompt_dir/revnum
-            echo -n "'" >>$prompt_dir/revnum
+            printf "'" >>$prompt_dir/revnum
             . $prompt_dir/revnum
         fi
 
         if [ -z "$prompt_st" ]; then
-            echo -n "prompt_st='" >$prompt_dir/st
+            printf "prompt_st='" >$prompt_dir/st
             hg_st=$(hg st 2>/dev/null | sed 's/?/\\\?/')
             if [ -n "$hg_st" ]; then
                 if [ -n "$(echo $hg_st | grep '?')" ]; then
-                    echo -ne $(turquoise '?') >>$prompt_dir/st
+                    printf "$(turquoise '?')" >>$prompt_dir/st
                 else
-                    echo -ne $(turquoise '!') >>$prompt_dir/st
+                    printf "$(turquoise '!')" >>$prompt_dir/st
                 fi
             else
-                echo -n 'NUL' >>$prompt_dir/st
+                printf 'NUL' >>$prompt_dir/st
             fi
-            echo -n "'" >>$prompt_dir/st
+            printf "'" >>$prompt_dir/st
             . $prompt_dir/st
         fi
         [ "$prompt_st" == 'NUL' ] && unset prompt_st
 
         if [ -z "$prompt_branch" ]; then
-            echo -n "prompt_branch='" >$prompt_dir/branch
-            echo -ne 'on '$(red $(hg branch 2>/dev/null)) >>$prompt_dir/branch
-            echo -n "'" >>$prompt_dir/branch
+            printf "prompt_branch='" >$prompt_dir/branch
+            printf "on $(red $(hg branch 2>/dev/null))" >>$prompt_dir/branch
+            printf "'" >>$prompt_dir/branch
             . $prompt_dir/branch
         fi
 
         if [ -z "$prompt_tags" ]; then
-            echo -n "prompt_tags='" >$prompt_dir/tags
+            printf "prompt_tags='" >$prompt_dir/tags
             hg_tags=$(hg id -t 2>/dev/null)
             for i in $hg_tags; do
                 if [ -n "$tags" ]; then
                     tags=$tags", "$(lilac $i)
                 else
-                    echo -n 'at ' >>$prompt_dir/tags
+                    printf 'at ' >>$prompt_dir/tags
                     tags=$(lilac $i)
                 fi
             done
             if [ -n "$tags" ]; then
-                echo -ne $tags >>$prompt_dir/tags
+                printf "$tags" >>$prompt_dir/tags
             else
-                echo -n 'NUL' >>$prompt_dir/tags
+                printf 'NUL' >>$prompt_dir/tags
             fi
-            echo -n "'" >>$prompt_dir/tags
+            printf "'" >>$prompt_dir/tags
             . $prompt_dir/tags
         fi
         [ "$prompt_tags" == 'NUL' ] && unset prompt_tags
@@ -170,29 +170,29 @@ function hg_info ()
         if [ -z "$prompt_bookmark" ]; then
             hg_bookmarks=$(hg bookmarks 2>/dev/null | grep '*' | \
                 sed 's/\s*\*\s*//' | sed 's/\s.*//')
-            echo -n "prompt_bookmark='" >$prompt_dir/bookmark
+            printf "prompt_bookmark='" >$prompt_dir/bookmark
             if [ -n "$hg_bookmarks" ]; then
                 bookmarks="bookmark: "$(red $hg_bookmarks)
             fi
             if [ -n "$bookmarks" ]; then
-                echo -ne "$bookmarks" >>$prompt_dir/bookmark
+                printf "$bookmarks" >>$prompt_dir/bookmark
             else
-                echo -n 'NUL' >>$prompt_dir/bookmark
+                printf 'NUL' >>$prompt_dir/bookmark
             fi
-            echo -n "'" >>$prompt_dir/bookmark
+            printf "'" >>$prompt_dir/bookmark
             . $prompt_dir/bookmark
         fi
         [ "$prompt_bookmark" == 'NUL' ] && unset prompt_bookmark
 
         if [ -z "$prompt_patches" ]; then
             hg_qtop=$(hg qtop 2>/dev/null)
-            echo -n "prompt_patches='" >$prompt_dir/patches
+            printf "prompt_patches='" >$prompt_dir/patches
             if [ -n "$hg_qtop" ]; then
                 for i in $(hg qapplied 2>/dev/null); do
                     if [ -n "$patches" ]; then
                         patches=$patches' → '
                     else
-                        echo -ne "patches: " >>$prompt_dir/patches
+                        printf "patches: " >>$prompt_dir/patches
                     fi
                     if [ "$i" == "$hg_qtop" ]; then
                         patches=$patches$(turquoise_u $i)
@@ -204,24 +204,24 @@ function hg_info ()
                     if [ -n "$patches" ]; then
                         patches=$patches' → '$(grey $i)
                     else
-                        echo -ne "patches: " >>$prompt_dir/patches
+                        printf "patches: " >>$prompt_dir/patches
                         patches=$(grey $i)
                     fi
                 done
             fi
             if [ -n "$patches" ]; then
-                echo -n $patches >>$prompt_dir/patches
+                printf "$patches" >>$prompt_dir/patches
             else
-                echo -n 'NUL' >>$prompt_dir/patches
+                printf 'NUL' >>$prompt_dir/patches
             fi
-            echo -n "'" >>$prompt_dir/patches
+            printf "'" >>$prompt_dir/patches
             . $prompt_dir/patches
         fi
         [ "$prompt_patches" == 'NUL' ] && unset prompt_patches
 
-        echo -ne $prompt_revnum$prompt_st' '$prompt_branch' '$prompt_tags"\n"
-        [ "$prompt_bookmark" ] && echo -ne $prompt_bookmark"\n"
-        echo -ne $prompt_patches
+        printf "$prompt_revnum$prompt_st $prompt_branch $prompt_tags\n"
+        [ "$prompt_bookmark" ] && printf "$prompt_bookmark\n"
+        printf "$prompt_patches"
     fi
 }
 
@@ -230,9 +230,9 @@ function hg_info ()
 function prompt_char ()
 {
     if [ -n "$(hg_check)" ]; then
-        echo -n '☿'
+        printf '☿'
     else
-        echo -n "\$"
+        printf "\$"
     fi
 }
 

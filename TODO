@@ -1,1 +1,0 @@
-- replace `echo -ne` commands with `printf`
