@@ -1,0 +1,5 @@
+- replace `echo -ne` commands with `printf`
+
+- initialize variables at the beginning
+
+- replace '! -n' with '-z'
