@@ -89,12 +89,12 @@ function hg_info ()
 
         # for file in patches; do
         file="patches"
-            [ -f $prompt_dir/$file ] && \
-                date_file=$(date -r $prompt_dir/$file +%s) && \
-                [ $date_file -ge $date_patch ] && \
-                . $prompt_dir/$file
+        [ -f $prompt_dir/$file ] && \
+            date_file=$(date -r $prompt_dir/$file +%s) && \
+            [ $date_file -ge $date_patch ] && \
+            . $prompt_dir/$file
         # done
-        
+
         # for file in st; do
         file="st"
         [ -f $prompt_dir/$file ] && \
@@ -106,11 +106,11 @@ function hg_info ()
 
         # for file in tags; do
         file="tags"
-            [ -f $prompt_dir/$file ] && \
-                date_file=$(date -r $prompt_dir/$file +%s) && \
-                [ $date_file -ge $date_hg ] && \
-                [ $date_file -ge $date_patch ] && \
-                . $prompt_dir/$file
+        [ -f $prompt_dir/$file ] && \
+            date_file=$(date -r $prompt_dir/$file +%s) && \
+            [ $date_file -ge $date_hg ] && \
+            [ $date_file -ge $date_patch ] && \
+            . $prompt_dir/$file
         # done
 
         if [ -z "$prompt_revnum" ]; then
