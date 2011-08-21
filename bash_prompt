@@ -115,7 +115,7 @@ function hg_info ()
 
         if [ -z "$prompt_revnum" ]; then
             echo -n "prompt_revnum='" >$prompt_dir/revnum
-            echo -ne $(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+//')) \
+            echo -ne $(lightblue ':'$(hg id -n 2>/dev/null | sed 's/+$//')) \
                 >>$prompt_dir/revnum
             echo -n "'" >>$prompt_dir/revnum
             . $prompt_dir/revnum
